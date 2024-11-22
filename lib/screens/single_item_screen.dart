@@ -1,9 +1,61 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_6/screens/card_data.dart'; // Impor data Cart
 
-class SingleItemScreen extends StatelessWidget {
+class SingleItemScreen extends StatefulWidget {
   final String img;
-  SingleItemScreen(this.img);
+  final String name; // Nama file gambar (tanpa ekstensi)
+  final double price; // Harga item
+
+  const SingleItemScreen(this.img, this.name, this.price, {Key? key}) : super(key: key);
+
+  @override
+  _SingleItemScreenState createState() => _SingleItemScreenState();
+}
+
+class _SingleItemScreenState extends State<SingleItemScreen> {
+  int _quantity = 1; // Jumlah awal
+  late double _totalPrice; // Harga total
+
+  @override
+  void initState() {
+    super.initState();
+    _totalPrice = widget.price * _quantity;
+  }
+
+  void _updateQuantity(int newQuantity) {
+    setState(() {
+      _quantity = newQuantity;
+      _totalPrice = widget.price * _quantity;
+    });
+  }
+
+  void _addToCart() async {
+    try {
+      await CartData.addItem(
+        img: widget.img,
+        name: widget.name,
+        price: widget.price,
+        quantity: _quantity,
+      );
+
+      // Menampilkan snackbar sebagai notifikasi
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${widget.name} berhasil ditambahkan ke keranjang!'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      // Menampilkan snackbar jika terjadi error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Terjadi kesalahan: $e'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,167 +63,98 @@ class SingleItemScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.only(top: 30, bottom: 20),
+            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 25),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(
-                      Icons.arrow_back_ios_new,
-                      color: Colors.white.withOpacity(0.5),
-                    ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new,
+                    color: Colors.white,
                   ),
+                  onPressed: () => Navigator.pop(context),
                 ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 30),
                 Center(
                   child: Image.asset(
-                    "images/$img.png",
-                    width: MediaQuery.of(context).size.width / 1.2,
+                    widget.img,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    fit: BoxFit.contain,
                   ),
                 ),
-                const SizedBox(height: 50),
-                Padding(
-                  padding: const EdgeInsets.only(left: 25, right: 40),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "BEST COFFEE",
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.4),
-                          letterSpacing: 3,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        img,
-                        style: const TextStyle(
-                          fontSize: 30,
-                          letterSpacing: 1,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 25),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(15),
-                            width: 120,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.2),
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  CupertinoIcons.minus,
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(width: 15),
-                                const Text(
-                                  "2",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                const SizedBox(width: 15),
-                                const Icon(
-                                  CupertinoIcons.plus,
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Text(
-                            "\$ 30.20",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Text(
-                        "Coffee is a major source of antioxidants in the diet. It has many health benefits.",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withOpacity(0.4),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        children: [
-                          const Text(
-                            "Volume: ",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          const Text(
-                            "60 ml",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 20, horizontal: 50),
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 50, 54, 56),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            child: const Text(
-                              "Add to Cart",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(20),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE57734),
-                              borderRadius: BorderRadius.circular(18),
-                            ),
-                            child: const Icon(
-                              Icons.favorite_outline,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                const SizedBox(height: 30),
+                Text(
+                  widget.name,
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "Price: \$${widget.price.toStringAsFixed(2)}",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            if (_quantity > 1) {
+                              _updateQuantity(_quantity - 1);
+                            }
+                          },
+                          child: const Icon(
+                            CupertinoIcons.minus_circle,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            '$_quantity',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            _updateQuantity(_quantity + 1);
+                          },
+                          child: const Icon(
+                            CupertinoIcons.plus_circle,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      "Total: \$${_totalPrice.toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _addToCart,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Text("Add to Cart"),
                 ),
               ],
             ),

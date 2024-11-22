@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_6/screens/home_screen.dart';
+import 'package:flutter_application_6/auth/login.dart';
 import 'package:google_fonts/google_fonts.dart'; // Pastikan ini di-import
 
 class WelcomeScreen extends StatelessWidget {
@@ -20,7 +20,7 @@ class WelcomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Coffee Shop",
+              "Del Shop",
               style: GoogleFonts.pacifico(
                 fontSize: 50,
                 color: Colors.white, // Properti 'color' diperbaiki
@@ -29,7 +29,7 @@ class WelcomeScreen extends StatelessWidget {
             Column(
               children: [
                 Text(
-                  "Feeling Low? Take a Sip of Coffee",
+                  "Lagi Free?? Sini ke KL",
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.8),
                     fontSize: 18,
@@ -46,7 +46,7 @@ class WelcomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => HomeScreen(), // Pastikan HomeScreen ada atau sudah diimport
+                        builder: (context) => LoginPage(), // Pastikan HomeScreen ada atau sudah diimport
                       ),
                     );
                   },
@@ -57,7 +57,7 @@ class WelcomeScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      "Get Start",
+                      "Login Yuk",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 22,

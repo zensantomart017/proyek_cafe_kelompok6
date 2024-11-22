@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-class HomeBottomBar extends StatelessWidget{
+import 'package:flutter_application_6/screens/cart.dart';  // Pastikan Cart diimport dengan benar
+
+class HomeBottomBar extends StatelessWidget {
   @override
-  Widget build (BuildContext context){
+  Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 15),
       height: 80,
@@ -19,20 +21,31 @@ class HomeBottomBar extends StatelessWidget{
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Icon(Icons.home,
-          color: Color(0xFFE57734),
-          size: 35,
+            color: Color(0xFFE57734),
+            size: 35,
           ),
           Icon(Icons.favorite_outline,
-          color: Color(0xFFE57734),
-          size: 35,
+            color: Color(0xFFE57734),
+            size: 35,
           ),
-          Icon(Icons.notifications,
-          color: Color(0xFFE57734),
-          size: 35,
+          GestureDetector(
+            onTap: () {
+              // Navigasi ke halaman Cart
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Cart(),
+                ),
+              );
+            },
+            child: Icon(Icons.shopping_cart,
+              color: Color(0xFFE57734),
+              size: 35,
+            ),
           ),
           Icon(Icons.person,
-          color: Color(0xFFE57734),
-          size: 35,
+            color: Color(0xFFE57734),
+            size: 35,
           ),
         ],
       ),
