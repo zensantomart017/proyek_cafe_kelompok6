@@ -48,8 +48,6 @@ class _LoginPageState extends State<LoginPage> {
       var userDoc = await FirebaseFirestore.instance.collection('users').doc(userCredential.user?.uid).get();
 
       if (userDoc.exists) {
-        var userCart = userDoc.data()?['cart'] ?? []; // Get cart data, default to empty array if not found
-        
         // Navigate to HomeScreen with the cart data
         Navigator.pushReplacement(
           context,

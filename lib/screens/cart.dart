@@ -31,6 +31,31 @@ class _CartState extends State<Cart> {
     });
   }
 
+  // Fungsi untuk menghapus item dari keranjang
+  Future<void> removeItem(String itemName) async {
+    try {
+      // Hapus dari Firestore
+      await CartData.removeItem(itemName);
+      // Perbarui UI
+      setState(() {
+        items.removeWhere((item) => item['name'] == itemName);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Item '$itemName' berhasil dihapus dari keranjang."),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text("Gagal menghapus item dari keranjang."),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Hitung total harga
@@ -85,11 +110,19 @@ class _CartState extends State<Cart> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(10),
-                                      child: Image.asset(
-                                        item['img'],
+                                      child: Image.network(
+                                        item['img'], // Gambar dari item
                                         width: 80,
                                         height: 80,
                                         fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return const Icon(
+                                            Icons.error,
+                                            size: 50,
+                                            color: Colors.red,
+                                          );
+                                        },
                                       ),
                                     ),
                                     const SizedBox(width: 15),
@@ -115,7 +148,7 @@ class _CartState extends State<Cart> {
                                           ),
                                           const SizedBox(height: 5),
                                           Text(
-                                            "Total: \$${item['totalPrice'].toStringAsFixed(2)}",
+                                            "Total: \Rp.${item['totalPrice'].toStringAsFixed(2)}",
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -124,6 +157,13 @@ class _CartState extends State<Cart> {
                                           ),
                                         ],
                                       ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () => removeItem(item['name']),
                                     ),
                                   ],
                                 ),
@@ -145,7 +185,7 @@ class _CartState extends State<Cart> {
                             ),
                           ),
                           Text(
-                            "\$${totalPrice.toStringAsFixed(2)}",
+                            "\Rp.${totalPrice.toStringAsFixed(2)}",
                             style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,

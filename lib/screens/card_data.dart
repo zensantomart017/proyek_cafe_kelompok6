@@ -10,22 +10,16 @@ class CartData {
     required int quantity,
   }) async {
     try {
-      // Mendapatkan user ID
       String uid = FirebaseAuth.instance.currentUser!.uid;
-
-      // Referensi ke dokumen user
       DocumentReference userCart =
           FirebaseFirestore.instance.collection('users').doc(uid);
 
-      // Ambil data cart yang sudah ada
       DocumentSnapshot userDoc = await userCart.get();
       List<dynamic> currentCart = userDoc.get('cart') ?? [];
 
-      // Periksa apakah item sudah ada di cart
       bool itemExists = false;
       for (var item in currentCart) {
         if (item['name'] == name) {
-          // Perbarui quantity dan total price jika item sudah ada
           item['quantity'] += quantity;
           item['totalPrice'] = item['price'] * item['quantity'];
           itemExists = true;
@@ -33,7 +27,6 @@ class CartData {
         }
       }
 
-      // Jika item tidak ada, tambahkan item baru
       if (!itemExists) {
         currentCart.add({
           'img': img,
@@ -44,7 +37,6 @@ class CartData {
         });
       }
 
-      // Simpan kembali data ke Firestore
       await userCart.update({'cart': currentCart});
       print("Item berhasil ditambahkan ke keranjang.");
     } catch (e) {
@@ -62,6 +54,27 @@ class CartData {
     } catch (e) {
       print("Terjadi kesalahan saat mengambil data keranjang: $e");
       return [];
+    }
+  }
+
+  // Hapus item spesifik dari Firestore berdasarkan nama
+  static Future<void> removeItem(String itemName) async {
+    try {
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+      DocumentReference userCart =
+          FirebaseFirestore.instance.collection('users').doc(uid);
+
+      DocumentSnapshot userDoc = await userCart.get();
+      List<dynamic> currentCart = userDoc.get('cart') ?? [];
+
+      // Filter item yang bukan item yang ingin dihapus
+      currentCart.removeWhere((item) => item['name'] == itemName);
+
+      // Perbarui kembali data di Firestore
+      await userCart.update({'cart': currentCart});
+      print("Item berhasil dihapus dari keranjang.");
+    } catch (e) {
+      print("Terjadi kesalahan saat menghapus item: $e");
     }
   }
 
