@@ -2,56 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_application_6/screens/single_item_screen.dart';
 import 'package:flutter_application_6/firestore_service.dart';
-import 'package:flutter_application_6/menu_item.dart';
+import 'package:flutter_application_6/food/food_menu.dart';
 
-class ItemsWidget extends StatefulWidget {
+class FoodWidget extends StatefulWidget {
   @override
-  _ItemsWidgetState createState() => _ItemsWidgetState();
+  _FoodWidgetState createState() => _FoodWidgetState();
 }
 
-class _ItemsWidgetState extends State<ItemsWidget> {
-  // Ganti Future dengan Stream
-  late Stream<List<MenuItem>> _itemsStream;
+class _FoodWidgetState extends State<FoodWidget> {
+  late Stream<List<FoodItem>> _foodStream;
 
   @override
   void initState() {
     super.initState();
-    _itemsStream = FirestoreService().getMenuItemsStream(); // Mengambil stream dari Firestore
+    _foodStream = FirestoreService().getFoodItemsStream();
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<MenuItem>>(
-      stream: _itemsStream,
+    return StreamBuilder<List<FoodItem>>(
+      stream: _foodStream,
       builder: (context, snapshot) {
-        // Menampilkan loading spinner saat data sedang dimuat
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
-        }
-        
-        // Menampilkan pesan error jika ada masalah saat mengambil data
-        else if (snapshot.hasError) {
+        } else if (snapshot.hasError) {
           return Center(child: Text("Error: ${snapshot.error}"));
-        }
-
-        // Menampilkan pesan ketika tidak ada data yang tersedia
-        else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text("No items available."));
-        }
-
-        // Setelah data berhasil dimuat, tampilkan dalam grid
-        else {
+        } else {
           final items = snapshot.data!;
 
-          return SingleChildScrollView( // Membungkus GridView dengan SingleChildScrollView untuk menangani overflow
+          return SingleChildScrollView(
             child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // Dua item per baris
-                crossAxisSpacing: 8.0, // Spasi antar item
-                mainAxisSpacing: 8.0, // Spasi antar baris
-                childAspectRatio: (150 / 195), // Rasio aspek setiap item grid
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8.0,
+                mainAxisSpacing: 8.0,
+                childAspectRatio: 150 / 195,
               ),
-              shrinkWrap: true, // Pastikan grid hanya mengambil ruang yang diperlukan
+              shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
               itemCount: items.length,
               itemBuilder: (context, index) {
@@ -100,10 +89,8 @@ class _ItemsWidgetState extends State<ItemsWidget> {
                                 return Center(
                                   child: CircularProgressIndicator(
                                     value: loadingProgress.expectedTotalBytes != null
-                                        ? loadingProgress.expectedTotalBytes != null
-                                            ? loadingProgress.cumulativeBytesLoaded /
-                                                (loadingProgress.expectedTotalBytes ?? 1)
-                                            : null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            (loadingProgress.expectedTotalBytes ?? 1)
                                         : null,
                                   ),
                                 );
