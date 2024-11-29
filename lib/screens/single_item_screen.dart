@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_6/screens/Favorite_Item.dart';
 import 'package:flutter_application_6/screens/card_data.dart';
-import 'package:flutter_application_6/screens/checkout.dart'; // Import Cart Data
+import 'package:flutter_application_6/screens/checkout.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import Cart Data
 
 class SingleItemScreen extends StatefulWidget {
   final String img; // The image URL
@@ -17,11 +19,25 @@ class SingleItemScreen extends StatefulWidget {
 class _SingleItemScreenState extends State<SingleItemScreen> {
   int _quantity = 1; // Initial quantity
   late double _totalPrice; // Total price based on quantity
+  late bool _isFavorite = false; // Variable to track favorite status
 
   @override
   void initState() {
     super.initState();
     _totalPrice = widget.price * _quantity;
+    _loadFavoriteStatus();
+  }
+
+  _loadFavoriteStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isFavorite = prefs.getBool('favorite_${widget.name}') ?? false;
+    });
+  }
+
+  _saveFavoriteStatus(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('favorite_${widget.name}', value);
   }
 
   void _updateQuantity(int newQuantity) {
@@ -29,6 +45,44 @@ class _SingleItemScreenState extends State<SingleItemScreen> {
       _quantity = newQuantity;
       _totalPrice = widget.price * _quantity;
     });
+  }
+
+void _toggleFavorite() {
+  setState(() {
+    _isFavorite = !_isFavorite;
+
+    if (_isFavorite) {
+      FavoriteData.addItem(
+        img: widget.img,
+        name: widget.name,
+        price: widget.price,
+      ).then((_) {
+        print('${widget.name} ditambahkan ke favorit');
+      });
+    } else {
+      FavoriteData.removeItem(widget.name).then((_) {
+        print('${widget.name} dihapus dari favorit');
+        // Ganti dengan getItems untuk memuat favorit yang terbaru jika diperlukan
+        FavoriteData.getItems().then((favorites) {
+          // Lakukan sesuatu dengan data favorit yang baru di sini, jika diperlukan
+          print("Favorit terbaru: $favorites");
+        });
+      });
+    }
+
+      // Simpan status favorit
+      _saveFavoriteStatus(_isFavorite);
+    });
+
+    // Tampilkan notifikasi kepada pengguna
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_isFavorite 
+          ? '${widget.name} ditambahkan ke favorit' 
+          : '${widget.name} dihapus dari favorit'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   void _addToCart() async {
@@ -57,6 +111,7 @@ class _SingleItemScreenState extends State<SingleItemScreen> {
       );
     }
   }
+
   void _goToCheckout() {
     Navigator.push(
       context,
@@ -87,7 +142,7 @@ class _SingleItemScreenState extends State<SingleItemScreen> {
                     Icons.arrow_back_ios_new,
                     color: Colors.white,
                   ),
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => Navigator.pop(context, _isFavorite),
                 ),
                 const SizedBox(height: 30),
                 // Image of the item
@@ -173,14 +228,26 @@ class _SingleItemScreenState extends State<SingleItemScreen> {
                 ),
                 const SizedBox(height: 20),
                 // Add to Cart button
-                ElevatedButton(
-                  onPressed: _addToCart,
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _addToCart,
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      child: const Text("Add to Cart"),
                     ),
-                  ),
-                  child: const Text("Add to Cart"),
+                    IconButton(
+                      icon: Icon(
+                        _isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: _isFavorite ? Colors.red : Colors.white,
+                      ),
+                      onPressed: _toggleFavorite,
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(

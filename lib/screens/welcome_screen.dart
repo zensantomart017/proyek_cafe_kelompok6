@@ -20,16 +20,16 @@ class WelcomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Del Shop",
+              "Del Cafe",
               style: GoogleFonts.pacifico(
                 fontSize: 50,
-                color: Colors.white, // Properti 'color' diperbaiki
+                color: Colors.white, 
               ),
             ),
             Column(
               children: [
                 Text(
-                  "Lagi Free?? Sini ke KL",
+                  "Lagi Free?? Sini ke DEL CAFE!",
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.8),
                     fontSize: 18,

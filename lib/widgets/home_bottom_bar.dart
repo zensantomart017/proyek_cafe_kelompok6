@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_6/screens/cart.dart';  // Pastikan Cart diimport dengan benar
+import 'package:flutter_application_6/screens/cart.dart';
+import 'package:flutter_application_6/screens/favorite_list.dart';
+import 'package:flutter_application_6/screens/home_screen.dart';
+import 'package:flutter_application_6/screens/info_akun.dart';
 
 class HomeBottomBar extends StatelessWidget {
   @override
@@ -20,32 +23,80 @@ class HomeBottomBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(Icons.home,
-            color: Color(0xFFE57734),
-            size: 35,
-          ),
-          Icon(Icons.favorite_outline,
-            color: Color(0xFFE57734),
-            size: 35,
-          ),
-          GestureDetector(
+          InkWell(
             onTap: () {
-              // Navigasi ke halaman Cart
               Navigator.push(
-                context,
+                context, 
                 MaterialPageRoute(
-                  builder: (context) => Cart(),
-                ),
-              );
-            },
-            child: Icon(Icons.shopping_cart,
+                  builder: (context) => HomeScreen()
+                  )
+                );
+              },
+            child: Icon(
+              Icons.home,
               color: Color(0xFFE57734),
               size: 35,
             ),
           ),
-          Icon(Icons.person,
-            color: Color(0xFFE57734),
-            size: 35,
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => FavoriteList()
+                  )
+                );
+              },
+            child: Icon(
+              Icons.favorite_outline,
+              color: Color(0xFFE57734),
+              size: 35,
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => HomeScreen()
+                  )
+                );
+              },
+            child: Icon(
+              Icons.notifications,
+              color: Color(0xFFE57734),
+              size: 35,
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => Cart()
+                  )
+                );
+              },
+            child: Icon(
+              Icons.shopping_cart,
+              color: Color(0xFFE57734),
+              size: 35,
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context, 
+                MaterialPageRoute(
+                  builder: (context) => const AccountPage()
+                  )
+                );
+              },
+            child: Icon(
+              Icons.person,
+              color: Color(0xFFE57734),
+              size: 35,
+            ),
           ),
         ],
       ),

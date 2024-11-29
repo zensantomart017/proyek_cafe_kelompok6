@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_6/screens/card_data.dart';
+import 'package:flutter_application_6/widgets/home_bottom_bar.dart';
 
 class Cart extends StatefulWidget {
   @override
@@ -9,6 +10,7 @@ class Cart extends StatefulWidget {
 class _CartState extends State<Cart> {
   List<dynamic> items = []; // Menyimpan item dari keranjang
   bool isLoading = true; // Status loading
+  final Color mainColor = const Color(0xFFE57734);
 
   @override
   void initState() {
@@ -68,10 +70,14 @@ class _CartState extends State<Cart> {
       appBar: AppBar(
         title: const Text(
           "Your Cart",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            ),
         ),
-        backgroundColor: Colors.white,
-        elevation: 0,
+        centerTitle: true,
+        backgroundColor: mainColor,
       ),
       body: isLoading
           ? const Center(
@@ -224,6 +230,7 @@ class _CartState extends State<Cart> {
                     ],
                   ),
                 ),
+                bottomNavigationBar: HomeBottomBar(),
     );
   }
 }
