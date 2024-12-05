@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_6/admin/admin.dart';
 import 'package:flutter_application_6/auth/register.dart';
 import 'package:flutter_application_6/screens/home_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,65 +31,77 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> loginUser() async {
-    setState(() {
-      isLoading = true; // Set loading state to true when login is in progress
-    });
+  setState(() {
+    isLoading = true; // Menandakan bahwa proses login sedang berlangsung
+  });
 
-    try {
-      // Perform Firebase login
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
+  try {
+    // Login menggunakan FirebaseAuth
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: emailController.text,
+      password: passwordController.text,
+    );
+
+    // Menambahkan user ke Firestore jika belum ada
+    await addUserToFirestore(userCredential.user!);
+
+    // Periksa apakah pengguna ada di koleksi 'admin'
+    var adminDoc = await FirebaseFirestore.instance.collection('admin').doc(userCredential.user?.uid).get();
+
+    if (adminDoc.exists) {
+      // Pengguna adalah admin
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => AdminScreen()), // Ganti dengan halaman admin
       );
 
-      // Add user to Firestore if not already present
-      await addUserToFirestore(userCredential.user!);
-
-      // Fetch user's cart data from Firestore
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Login Successful! Admin")),
+      );
+    } else {
+      // Pengguna adalah user biasa, cek koleksi 'users'
       var userDoc = await FirebaseFirestore.instance.collection('users').doc(userCredential.user?.uid).get();
 
       if (userDoc.exists) {
-        // Navigate to HomeScreen with the cart data
+        // Pengguna biasa
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (context) => HomeScreen(), // Pass cart data to HomeScreen
-          ),
+          MaterialPageRoute(builder: (context) => HomeScreen()), // Ganti dengan halaman user
         );
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Login Successful!")),
+          const SnackBar(content: Text("Login Successful! User")),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("User not found in Firestore!")),
         );
       }
-    } on FirebaseAuthException catch (e) {
-      // Handle Firebase Auth errors
-      String errorMessage = '';
-      if (e.code == 'user-not-found') {
-        errorMessage = 'No user found for that email.';
-      } else if (e.code == 'wrong-password') {
-        errorMessage = 'Wrong password provided for that user.';
-      } else {
-        errorMessage = e.message ?? 'An error occurred. Please try again.';
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login Failed: $errorMessage")),
-      );
-    } catch (e) {
-      // Handle any other errors
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Login Failed: ${e.toString()}")),
-      );
-    } finally {
-      setState(() {
-        isLoading = false; // Set loading state to false after login process is complete
-      });
     }
+  } on FirebaseAuthException catch (e) {
+    // Tangani error login
+    String errorMessage = '';
+    if (e.code == 'user-not-found') {
+      errorMessage = 'No user found for that email.';
+    } else if (e.code == 'wrong-password') {
+      errorMessage = 'Wrong password provided for that user.';
+    } else {
+      errorMessage = e.message ?? 'An error occurred. Please try again.';
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Login Failed: $errorMessage")),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Login Failed: ${e.toString()}")),
+    );
+  } finally {
+    setState(() {
+      isLoading = false; // Set loading state ke false setelah login selesai
+    });
   }
+}
 
   @override
   Widget build(BuildContext context) {
