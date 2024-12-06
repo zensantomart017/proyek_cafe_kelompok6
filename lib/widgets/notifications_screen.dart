@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_6/widgets/home_bottom_bar.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({Key? key}) : super(key: key);
+  final Color mainColor = const Color(0xFFE57734);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: mainColor,
         title: const Text(
           'Daftar Pesanan',
           style: TextStyle(
-            color: Colors.white, // Mengubah warna teks menjadi putih
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
           ),
         ),
-        backgroundColor: const Color(0xFF212325),
+        centerTitle: true,
       ),
       body: FutureBuilder<User?>(  // Mengambil data pengguna yang sedang login
         future: Future.value(FirebaseAuth.instance.currentUser),
@@ -115,6 +120,7 @@ class NotificationsScreen extends StatelessWidget {
           );
         },
       ),
+      bottomNavigationBar: HomeBottomBar(),
     );
   }
 }

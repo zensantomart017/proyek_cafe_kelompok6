@@ -64,6 +64,7 @@ class _HotScreenState extends State<HotScreen> with SingleTickerProviderStateMix
     return DefaultTabController(
       length: 4,
       child: Scaffold(
+        backgroundColor: Colors.lightBlue,
         body: TabBarView(
           controller: _tabController,
           children: [

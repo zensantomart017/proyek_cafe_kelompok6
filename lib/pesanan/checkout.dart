@@ -26,6 +26,7 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   String selectedMethod = "Dana"; // Default payment method
+  final Color mainColor = const Color(0xFFE57734);
 
   @override
   void initState() {
@@ -107,7 +108,16 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Checkout"),
+        backgroundColor: mainColor,
+        title: const Text(
+          'Checkout',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

@@ -1,15 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_6/admin/food.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Asumsi FoodScreen ada di sini
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_6/auth/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
+  final Color mainColor = Colors.lightBlue;
+
+  // Fungsi untuk Logout
+  void _logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.lightBlue,
       appBar: AppBar(
-        title: const Text('Admin Dashboard'),
+        backgroundColor: mainColor,
+        title: const Text(
+          'Admin Dashboard',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          // Ikon Logout di AppBar
+          IconButton(
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.white,
+              ),
+            tooltip: 'Logout',
+            onPressed: () {
+              _logout(context); // Memanggil fungsi logout
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -25,7 +61,7 @@ class AdminScreen extends StatelessWidget {
                   ),
                 );
               },
-               child: const Text('Pesanan'),
+              child: const Text('Pesanan'),
             ),
             const SizedBox(height: 20),
             // Tombol Produk
@@ -48,6 +84,7 @@ class AdminScreen extends StatelessWidget {
 }
 class PesananScreen extends StatelessWidget {
   const PesananScreen({super.key});
+  final Color mainColor = Colors.lightBlue;
 
   // Fungsi untuk menghapus pesanan dari Firestore tanpa menggunakan UID
   Future<void> selesaiPesanan(String orderId) async {
@@ -63,8 +100,18 @@ class PesananScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.lightBlue,
       appBar: AppBar(
-        title: const Text('Pesanan'),
+        backgroundColor: mainColor,
+        title: const Text(
+          'Pesanan',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: StreamBuilder<QuerySnapshot>(
         // Mengambil data pesanan dari koleksi 'pesanan'

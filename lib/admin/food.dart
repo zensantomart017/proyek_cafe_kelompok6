@@ -13,6 +13,7 @@ class FoodScreen extends StatefulWidget {
 
 class _FoodScreenState extends State<FoodScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final Color mainColor = Colors.lightBlue;
 
   @override
   void initState() {
@@ -65,13 +66,23 @@ class _FoodScreenState extends State<FoodScreen> with SingleTickerProviderStateM
     return DefaultTabController(
       length: 4,
       child: Scaffold(
+        backgroundColor: Colors.lightBlue,
         appBar: AppBar(
-          title: const Text('Produk'),
+          backgroundColor: mainColor,
+          title: const Text(
+          'Produk',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
           bottom: TabBar(
             controller: _tabController,
-            labelColor: Colors.blue,
+            labelColor: Colors.white,
             unselectedLabelColor: Colors.black,
-            indicatorColor: Colors.blue,
+            indicatorColor: Colors.white,
             tabs: const [
               Tab(text: "Food"),
               Tab(text: "Hot Coffee"),
@@ -81,7 +92,10 @@ class _FoodScreenState extends State<FoodScreen> with SingleTickerProviderStateM
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.add),
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
+                ),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -194,58 +208,85 @@ class _AddProductDialogState extends State<AddProductDialog> {
   String description = '';
   String image = '';
   double price = 0.0;
+  final Color mainColor = Colors.lightBlue;
 
   @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Tambah Produk'),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Nama'),
-              validator: (value) => value == null || value.isEmpty ? 'Nama tidak boleh kosong' : null,
-              onSaved: (value) => name = value ?? '',
+Widget build(BuildContext context) {
+  return AlertDialog(
+    backgroundColor: mainColor,
+    title: const Text(
+      'Tambah Produk',
+      style: TextStyle(color: Colors.white), // Warna teks putih
+    ),
+    content: Form(
+      key: _formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextFormField(
+            decoration: const InputDecoration(
+              labelText: 'Nama',
+              labelStyle: TextStyle(color: Colors.white), // Warna label putih
             ),
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Deskripsi'),
-              validator: (value) => value == null || value.isEmpty ? 'Deskripsi tidak boleh kosong' : null,
-              onSaved: (value) => description = value ?? '',
+            style: const TextStyle(color: Colors.white), // Warna input teks putih
+            validator: (value) => value == null || value.isEmpty ? 'Nama tidak boleh kosong' : null,
+            onSaved: (value) => name = value ?? '',
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              labelText: 'Deskripsi',
+              labelStyle: TextStyle(color: Colors.white),
             ),
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'URL Gambar'),
-              validator: (value) => value == null || value.isEmpty ? 'URL gambar tidak boleh kosong' : null,
-              onSaved: (value) => image = value ?? '',
+            style: const TextStyle(color: Colors.white),
+            validator: (value) => value == null || value.isEmpty ? 'Deskripsi tidak boleh kosong' : null,
+            onSaved: (value) => description = value ?? '',
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              labelText: 'URL Gambar',
+              labelStyle: TextStyle(color: Colors.white),
             ),
-            TextFormField(
-              decoration: const InputDecoration(labelText: 'Harga'),
-              keyboardType: TextInputType.number,
-              validator: (value) => value == null || value.isEmpty ? 'Harga tidak boleh kosong' : null,
-              onSaved: (value) => price = double.tryParse(value ?? '0') ?? 0.0,
+            style: const TextStyle(color: Colors.white),
+            validator: (value) => value == null || value.isEmpty ? 'URL gambar tidak boleh kosong' : null,
+            onSaved: (value) => image = value ?? '',
+          ),
+          TextFormField(
+            decoration: const InputDecoration(
+              labelText: 'Harga',
+              labelStyle: TextStyle(color: Colors.white),
             ),
-          ],
+            style: const TextStyle(color: Colors.white),
+            keyboardType: TextInputType.number,
+            validator: (value) => value == null || value.isEmpty ? 'Harga tidak boleh kosong' : null,
+            onSaved: (value) => price = double.tryParse(value ?? '0') ?? 0.0,
+          ),
+        ],
+      ),
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context),
+        child: const Text(
+          'Batal',
+          style: TextStyle(color: Colors.white), // Warna teks putih
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Batal'),
+      TextButton(
+        onPressed: () {
+          if (_formKey.currentState?.validate() ?? false) {
+            _formKey.currentState?.save();
+            widget.onAdd(name, description, image, price);
+            Navigator.pop(context);
+          }
+        },
+        child: const Text(
+          'Tambah',
+          style: TextStyle(color: Colors.white), // Warna teks putih
         ),
-        TextButton(
-          onPressed: () {
-            if (_formKey.currentState?.validate() ?? false) {
-              _formKey.currentState?.save();
-              widget.onAdd(name, description, image, price);
-              Navigator.pop(context);
-            }
-          },
-          child: const Text('Tambah'),
-        ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 }
 
 // Dialog untuk memperbarui produk
@@ -277,6 +318,7 @@ class _UpdateProductDialogState extends State<UpdateProductDialog> {
   late String description;
   late String image;
   late double price;
+  final Color mainColor = const Color(0xFF006994);
 
   @override
   void initState() {
@@ -290,6 +332,7 @@ class _UpdateProductDialogState extends State<UpdateProductDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      backgroundColor: mainColor,
       title: const Text('Update Produk'),
       content: Form(
         key: _formKey,

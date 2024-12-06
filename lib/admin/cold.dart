@@ -64,6 +64,7 @@ class _ColdScreenState extends State<ColdScreen> with SingleTickerProviderStateM
     return DefaultTabController(
       length: 4,
       child: Scaffold(
+        backgroundColor: Colors.lightBlue,
         body: TabBarView(
           controller: _tabController,
           children: [

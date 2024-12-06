@@ -64,6 +64,7 @@ class _SnacksScreenState extends State<SnacksScreen> with SingleTickerProviderSt
     return DefaultTabController(
       length: 4,
       child: Scaffold(
+        backgroundColor: Colors.lightBlue,
         body: TabBarView(
           controller: _tabController,
           children: [
