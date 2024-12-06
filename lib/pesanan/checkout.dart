@@ -34,18 +34,24 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   // Fungsi untuk menyimpan data ke Firestore dengan `uid`
-  Future<void> saveOrder() async {
+  // Fungsi untuk menyimpan data ke Firestore dengan `uid`
+Future<void> saveOrder() async {
   try {
-    // Ambil UID pengguna dari Firebase Authentication
+    // Ambil UID dan displayName pengguna dari Firebase Authentication
     String? uid = FirebaseAuth.instance.currentUser?.uid;
+    String? userName = FirebaseAuth.instance.currentUser?.displayName;
 
     if (uid == null) {
       throw "Pengguna tidak ditemukan.";
     }
 
+    // Jika userName kosong, Anda bisa memberikan default value atau meminta pengguna mengisi nama mereka
+    userName ??= 'Nama Pengguna'; // Jika nama kosong, beri nilai default
+
     // Data pesanan yang akan disimpan
     Map<String, dynamic> orderData = {
-      'userName': 'Nama Pengguna', 
+      'userId': uid, // Tambahkan userId (UID pengguna)
+      'userName': userName, // Menggunakan displayName dari Firebase
       'name': widget.name, // Nama produk
       'img': widget.img, // Gambar produk
       'price': widget.price, // Harga produk
@@ -77,6 +83,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     debugPrint('Gagal menyimpan pesanan: $e');
   }
 }
+
 
 
   // Fungsi untuk menampilkan notifikasi

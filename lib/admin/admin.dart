@@ -135,13 +135,53 @@ class PesananScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.check_circle, color: Colors.green),
-                        onPressed: () async {
-                          // Hapus pesanan saat tombol ditekan
-                          await selesaiPesanan(orderId); // Menggunakan hanya orderId
-                        },
-                      ),
+                    IconButton(
+  icon: const Icon(Icons.check_circle, color: Colors.green),
+  onPressed: () async {
+    try {
+      String orderId = order.id;  // Ambil documentId dari koleksi pesanan
+      debugPrint('Mengupdate status pesanan dengan orderId: $orderId');
+
+      // Ambil userId dari koleksi 'pesanan' menggunakan orderId
+      var orderDoc = await FirebaseFirestore.instance
+          .collection('pesanan')
+          .doc(orderId)
+          .get();
+
+      if (orderDoc.exists) {
+        String userId = orderDoc['userId'];  // Ambil userId dari dokumen pesanan
+
+        // Mencari dokumen di subkoleksi 'orders' berdasarkan field 'orderId'
+        var orderSubDocSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .collection('orders')
+            .where('orderId', isEqualTo: orderId)  // Mencari berdasarkan field orderId
+            .get();
+
+        if (orderSubDocSnapshot.docs.isNotEmpty) {
+          // Jika dokumen ditemukan, ambil docId dan update status
+          String orderSubDocId = orderSubDocSnapshot.docs.first.id;
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .collection('orders')
+              .doc(orderSubDocId)  // Gunakan docId dari subkoleksi orders
+              .update({'status': 'completed'});
+
+          debugPrint('Status pesanan berhasil diperbarui menjadi completed.');
+        } else {
+          debugPrint('Dokumen dengan orderId tidak ditemukan di subkoleksi orders.');
+        }
+      } else {
+        debugPrint('Dokumen pesanan dengan orderId tidak ditemukan.');
+      }
+    } catch (e) {
+      debugPrint('Gagal memperbarui status pesanan: $e');
+    }
+  },
+),
                     ],
                   ),
                 ),
